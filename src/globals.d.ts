@@ -13,4 +13,6 @@ interface QueryProduct {
     maxP?: number;
     obj?: string;
     ord?: string;
+    pag?: string;
+    lim?: string;
 }

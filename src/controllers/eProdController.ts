@@ -1,9 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import productModel from "../models/eProdModel";
+import { lutimes } from "node:fs";
 
 export async function getProducts(request: FastifyRequest<{ Querystring: QueryProduct }>, reply: FastifyReply) {
     try {
-        const { cat, minP, maxP, obj, ord } = request.query;
+        const { cat, minP, maxP, obj, ord, pag = 1, lim = 6 } = request.query;
+
+        const sk = (Number(pag) - 1) * Number(lim);
 
         const filtro: any = {};
 
@@ -51,9 +54,13 @@ export async function getProducts(request: FastifyRequest<{ Querystring: QueryPr
             ordenacao = { preco: -1 };
         }
 
-        const prods = await productModel.find(filtro).sort(ordenacao);
+        const prods = await productModel.find(filtro).sort(ordenacao).skip(sk).limit(Number(lim));
 
-        return reply.status(200).send(prods);
+        return reply.status(200).send({
+            data: prods,
+            pag,
+            lim
+        });
 
     } catch (error) {
         return reply.status(500).send({
