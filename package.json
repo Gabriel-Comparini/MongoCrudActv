@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.ts"
+    "dev": "tsx index.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,8 @@
     "mongoose": "^9.9.3"
   },
   "devDependencies": {
-    "@types/node": "^22.20.3"
+    "@types/node": "^22.20.3",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
   }
 }

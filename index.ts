@@ -1,11 +1,12 @@
 import fastify from "fastify";
 import connectDB from "./src/config/database";
+import eProdRoutes from "./src/routers/eProdRoutes";
 
 const HOST = "localhost";
 const PORT = 8000;
 const app = fastify();
 
-// TODO tem que colocar o register aqui.
+app.register(eProdRoutes);
 
 connectDB().then(() => {
     app.listen({
