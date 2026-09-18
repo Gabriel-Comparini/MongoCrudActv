@@ -12,11 +12,11 @@ const eProdRoutes = (app: FastifyInstance) => {
     );
 
     app.get("/products", 
-        async (request: FastifyRequest, reply: FastifyReply) => await getProducts(request, reply)
+        async (request: FastifyRequest<{ Querystring: QueryProduct }>, reply: FastifyReply) => await getProducts(request, reply)
     );
     
     app.get("/products/:id", 
-        async (request: FastifyRequest<{ Params: { id: Number } }>, reply: FastifyReply) => await getProductById(request, reply)
+        async (request: FastifyRequest<{ Params: { id: String } }>, reply: FastifyReply) => await getProductById(request, reply)
     );
 
     app.post("/products", {
@@ -36,12 +36,12 @@ const eProdRoutes = (app: FastifyInstance) => {
         await createProduct(request, reply)
     );
 
-    app.put("/products/:id", 
-        async (request: FastifyRequest<{ Params: { id: Number } }>, reply: FastifyReply) => await updateProduct(request, reply)
+    app.patch("/products/:id", 
+        async (request: FastifyRequest<{ Params: { id: String } }>, reply: FastifyReply) => await updateProduct(request, reply)
     );
 
     app.delete("/products/:id", 
-        async (request: FastifyRequest<{ Params: { id: Number } }>, reply: FastifyReply) => await deleteProduct(request, reply)
+        async (request: FastifyRequest<{ Params: { id: String } }>, reply: FastifyReply) => await deleteProduct(request, reply)
     );
 }
 

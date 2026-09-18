@@ -6,6 +6,11 @@ const productModelSchema = new mongoose.Schema({
         required: true
     }, 
 
+    descricao: {
+        type: String,
+        default: ""
+    }, 
+
     preco: {
         type: Number,
         required: true
@@ -25,6 +30,11 @@ const productModelSchema = new mongoose.Schema({
         type: Object,
         default: {}
     }
+});
+
+productModelSchema.index({
+    nome: "text",
+    descricao: "text"
 });
 
 const productModel = mongoose.model("Product", productModelSchema);
