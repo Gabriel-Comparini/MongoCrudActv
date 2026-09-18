@@ -16,19 +16,32 @@ const eProdRoutes = (app: FastifyInstance) => {
     );
     
     app.get("/products/:id", 
-        async (request: FastifyRequest, reply: FastifyReply) => await getProductById(request, reply)
+        async (request: FastifyRequest<{ Params: { id: Number } }>, reply: FastifyReply) => await getProductById(request, reply)
     );
 
-    app.post("/products", 
-        async (request: FastifyRequest, reply: FastifyReply) => await createProduct(request, reply)
+    app.post("/products", {
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    nome: { type: 'string' },
+                    preco: { type: 'number' },
+                    categoria: { type: 'string' },
+                    estoque: { type: 'number' }
+                },
+                required: ['nome', 'preco', 'categoria', 'estoque']
+            }
+        }
+    }, async (request: FastifyRequest<{ Body: ProductBody }>, reply: FastifyReply) => 
+        await createProduct(request, reply)
     );
 
     app.put("/products/:id", 
-        async (request: FastifyRequest, reply: FastifyReply) => await updateProduct(request, reply)
+        async (request: FastifyRequest<{ Params: { id: Number } }>, reply: FastifyReply) => await updateProduct(request, reply)
     );
 
     app.delete("/products/:id", 
-        async (request: FastifyRequest, reply: FastifyReply) => await deleteProduct(request, reply)
+        async (request: FastifyRequest<{ Params: { id: Number } }>, reply: FastifyReply) => await deleteProduct(request, reply)
     );
 }
 
