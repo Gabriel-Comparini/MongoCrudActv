@@ -37,7 +37,7 @@ const eProdRoutes = (app: FastifyInstance) => {
     );
 
     app.patch("/products/:id", 
-        async (request: FastifyRequest<{ Params: { id: String } }>, reply: FastifyReply) => await updateProduct(request, reply)
+        async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => await updateProduct(request, reply)
     );
 
     app.delete("/products/:id", 

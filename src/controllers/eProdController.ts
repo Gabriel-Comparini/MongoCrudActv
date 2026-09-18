@@ -57,7 +57,7 @@ export async function getProducts(request: FastifyRequest<{ Querystring: QueryPr
 
     } catch (error) {
         return reply.status(500).send({
-            Erro: `Erro ao tentar listar produtos: ${error}`
+            "Erro": `Erro ao tentar listar produtos: ${error}`
         });
     }
 }
@@ -75,17 +75,18 @@ export async function getProductById(request: FastifyRequest<{ Params: { id: Str
         return reply.status(200).send(prod);
     } catch (error) {
         reply.status(500).send({
-            "Error": `Erro ao consultar o produto pelo id: ${error}`
+            "Erro": `Erro ao consultar o produto pelo id: ${error}`
         })
     }
 }
 
 export async function createProduct(request: FastifyRequest<{ Body: ProductBody }>, reply: FastifyReply) {
     try {
-        const { nome, preco, categoria, estoque } = request.body;
+        const { nome, preco, categoria, estoque, descricao } = request.body;
 
         const newProd = new productModel({
             nome,
+            descricao,
             preco,
             categoria,
             estoque
@@ -97,7 +98,7 @@ export async function createProduct(request: FastifyRequest<{ Body: ProductBody 
         });
     } catch (error) {
         reply.status(500).send({
-            "Error": `Erro ao criar o produto: ${error}`
+            "Erro": `Erro ao criar o produto: ${error}`
         })
     }
 }
@@ -115,15 +116,36 @@ export async function deleteProduct(request: FastifyRequest<{ Params: { id: Stri
         return reply.status(204);
     } catch (error) {
         reply.status(500).send({
-            "Error": `Erro ao deletar o produto: ${error}`
+            "Erro": `Erro ao deletar o produto: ${error}`
         })
     }
 }
 
-export async function updateProduct(request: FastifyRequest<{ Params: { id: String } }>, reply: FastifyReply) {
+export async function updateProduct(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
     try {
-        
+        const { id } = request.params;
+        const dados = request.body as Partial<ProductBody>;
+
+        const produto = await productModel.findByIdAndUpdate(
+            id,
+            { $set: dados },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!produto) {
+            return reply.status(404).send({
+                erro: "Produto não encontrado"
+            });
+        }
+
+        return reply.status(200).send(produto);
+
     } catch (error) {
-        
+        return reply.status(400).send({
+            "Erro": `Erro ao atualizar produto: ${error}`
+        });
     }
 }
