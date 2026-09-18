@@ -82,15 +82,9 @@ export async function getProductById(request: FastifyRequest<{ Params: { id: Str
 
 export async function createProduct(request: FastifyRequest<{ Body: ProductBody }>, reply: FastifyReply) {
     try {
-        const { nome, preco, categoria, estoque, descricao } = request.body;
+        // const { nome, preco, categoria, estoque, descricao } = request.body;
 
-        const newProd = new productModel({
-            nome,
-            descricao,
-            preco,
-            categoria,
-            estoque
-        });
+        const newProd = new productModel(request.body);
 
         await newProd.save();
         return reply.status(201).send({
@@ -113,7 +107,7 @@ export async function deleteProduct(request: FastifyRequest<{ Params: { id: Stri
             "Erro": "Produto não encontrado/existente."
         });
 
-        return reply.status(204);
+        return reply.status(204).send();
     } catch (error) {
         reply.status(500).send({
             "Erro": `Erro ao deletar o produto: ${error}`
@@ -121,14 +115,30 @@ export async function deleteProduct(request: FastifyRequest<{ Params: { id: Stri
     }
 }
 
-export async function updateProduct(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+export async function updateProduct(request: FastifyRequest<{ Params: { id: string }, Querystring: { actv: string } }>, reply: FastifyReply) {
     try {
         const { id } = request.params;
+        const { actv } = request.query;
+
         const dados = request.body as Partial<ProductBody>;
+        
+        const { estoque, ...dadosSemEstoque } = dados;
+
+        const update: any = {
+            $set: dadosSemEstoque
+        };
+
+        if (actv === "yes") {
+            update.$inc = {
+                estoque: estoque
+            };
+        } else {
+            update.$set.estoque = estoque;
+        }
 
         const produto = await productModel.findByIdAndUpdate(
             id,
-            { $set: dados },
+            update,
             {
                 new: true,
                 runValidators: true
